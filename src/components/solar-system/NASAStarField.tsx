@@ -7,7 +7,7 @@
 
 import React, { useMemo, useRef, Suspense } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { TextureLoader, AdditiveBlending, BackSide, RepeatWrapping } from 'three';
+import { TextureLoader, AdditiveBlending, BackSide, RepeatWrapping, Mesh, Points } from 'three';
 import { getStarCatalog, raDecToCartesian, getStarColor, getStarSize } from '@/lib/data/star-catalog';
 
 interface NASAStarFieldProps {
@@ -18,7 +18,7 @@ interface NASAStarFieldProps {
 
 // NASA Milky Way Background using real astronomical imagery
 function MilkyWayPanorama({ radius, useRealImages }: { radius: number; useRealImages: boolean }) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   
   // Try to load real NASA Milky Way image, fallback to procedural
   let milkyWayTexture = null;
@@ -49,6 +49,7 @@ function MilkyWayPanorama({ radius, useRealImages }: { radius: number; useRealIm
           side={BackSide}
           transparent
           opacity={0.6}
+          depthWrite={false} // Prevent Milky Way from affecting depth buffer
         />
       </mesh>
     );
@@ -64,6 +65,7 @@ function MilkyWayPanorama({ radius, useRealImages }: { radius: number; useRealIm
         opacity={0.3}
         side={BackSide}
         blending={AdditiveBlending}
+        depthWrite={false} // Prevent background from affecting depth buffer
       />
     </mesh>
   );
@@ -83,7 +85,7 @@ function HubbleNebula({
   color?: string;
   name?: string;
 }) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   
   let nebulaTexture = null;
   try {
@@ -109,6 +111,7 @@ function HubbleNebula({
         transparent
         opacity={0.4}
         blending={AdditiveBlending}
+        depthWrite={false} // Prevent nebula from affecting depth buffer
       />
     </mesh>
   );
@@ -116,7 +119,7 @@ function HubbleNebula({
 
 // Deep Space Field using Hubble Deep Field imagery
 function HubbleDeepField({ radius }: { radius: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   
   let deepFieldTexture = null;
   try {
@@ -135,6 +138,7 @@ function HubbleDeepField({ radius }: { radius: number }) {
         transparent
         opacity={0.3}
         blending={AdditiveBlending}
+        depthWrite={false} // Prevent deep field from affecting depth buffer
       />
     </mesh>
   );
@@ -142,7 +146,7 @@ function HubbleDeepField({ radius }: { radius: number }) {
 
 // Star field with real star catalog data (enhanced)
 function EnhancedStarField({ radius }: { radius: number }) {
-  const pointsRef = useRef<THREE.Points>(null);
+  const pointsRef = useRef<Points>(null);
   const starCatalog = useMemo(() => getStarCatalog(), []);
 
   const { positions, colors, sizes } = useMemo(() => {
@@ -204,6 +208,7 @@ function EnhancedStarField({ radius }: { radius: number }) {
         blending={AdditiveBlending}
         sizeAttenuation={false}
         alphaTest={0.01}
+        depthWrite={false} // Prevent stars from affecting depth buffer
       />
     </points>
   );

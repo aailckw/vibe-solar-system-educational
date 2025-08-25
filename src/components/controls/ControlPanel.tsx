@@ -46,7 +46,6 @@ export default function ControlPanel({
   const cameraModes = [
     { value: 'free', label: 'Free Camera' },
     { value: 'follow', label: 'Follow Object' },
-    { value: 'overview', label: 'System Overview' },
   ] as const;
 
   return (
@@ -214,43 +213,6 @@ export default function ControlPanel({
                         <div className="font-medium">{mode.label}</div>
                       </button>
                     ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-sm font-semibold text-white mb-3">Camera Settings</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">Auto Rotate</span>
-                      <button
-                        onClick={() => onNavigationChange({ autoRotate: !navigation.autoRotate })}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          navigation.autoRotate ? 'bg-blue-600' : 'bg-slate-600'
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            navigation.autoRotate ? 'translate-x-6' : 'translate-x-1'
-                          }`}
-                        />
-                      </button>
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-slate-300">Rotation Speed</span>
-                        <span className="text-slate-400 text-sm">{navigation.autoRotateSpeed?.toFixed(1)}x</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0.1"
-                        max="2.0"
-                        step="0.1"
-                        value={navigation.autoRotateSpeed || 0.3}
-                        onChange={(e) => onNavigationChange({ autoRotateSpeed: parseFloat(e.target.value) })}
-                        className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer"
-                      />
-                    </div>
                   </div>
                 </div>
               </div>

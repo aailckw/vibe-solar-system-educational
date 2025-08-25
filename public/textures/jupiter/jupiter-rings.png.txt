@@ -1,0 +1,9 @@
+This is a placeholder text file for jupiter-rings.png.
+
+In a real implementation, this would be an actual PNG image with:
+- Transparency (alpha channel)
+- A thin, faint ring pattern
+- Subtle dusty appearance 
+- Proper inner and outer edges
+
+Please replace this file with a proper PNG image as described in the JUPITER_RING_TEXTURE_SETUP.md document.

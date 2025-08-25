@@ -7,8 +7,7 @@
 
 import React, { useMemo, useRef, Suspense } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { TextureLoader, AdditiveBlending, BackSide } from 'three';
-import RealisticStarField from './RealisticStarField';
+import { TextureLoader, AdditiveBlending, BackSide, Mesh, Points } from 'three';
 
 interface AstronomicalBackgroundProps {
   radius?: number;
@@ -19,7 +18,7 @@ interface AstronomicalBackgroundProps {
 
 // Milky Way background component
 function MilkyWayBackground({ radius }: { radius: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   
   // In a real implementation, load actual Milky Way panorama from NASA
   // For now, create a gradient effect
@@ -38,6 +37,7 @@ function MilkyWayBackground({ radius }: { radius: number }) {
         opacity={0.3}
         side={BackSide}
         blending={AdditiveBlending}
+        depthWrite={false} // Prevent Milky Way from affecting depth buffer
       />
     </mesh>
   );
@@ -102,7 +102,7 @@ function NebulaCloud({
   opacity: number;
   animationOffset?: number;
 }) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   
   useFrame((state) => {
     if (meshRef.current) {
@@ -125,6 +125,7 @@ function NebulaCloud({
         transparent
         opacity={opacity}
         blending={AdditiveBlending}
+        depthWrite={false} // Prevent nebula from affecting depth buffer
       />
     </mesh>
   );
@@ -163,6 +164,7 @@ function DistantGalaxies({ radius }: { radius: number }) {
             transparent
             opacity={galaxy.opacity}
             blending={AdditiveBlending}
+            depthWrite={false} // Prevent galaxies from affecting depth buffer
           />
         </mesh>
       ))}
@@ -180,9 +182,6 @@ export default function AstronomicalBackground({
   return (
     <Suspense fallback={null}>
       <group>
-        {/* Realistic star field with actual star catalog data */}
-        <RealisticStarField radius={radius} animated={animated} />
-        
         {/* Milky Way background */}
         {showMilkyWay && <MilkyWayBackground radius={radius} />}
         
@@ -201,7 +200,7 @@ export default function AstronomicalBackground({
 
 // Cosmic dust component for added realism
 function CosmicDust({ radius }: { radius: number }) {
-  const pointsRef = useRef<THREE.Points>(null);
+  const pointsRef = useRef<Points>(null);
   
   const { positions, opacities } = useMemo(() => {
     const count = 1000;
@@ -257,6 +256,7 @@ function CosmicDust({ radius }: { radius: number }) {
         opacity={0.3}
         blending={AdditiveBlending}
         sizeAttenuation={false}
+        depthWrite={false} // Prevent cosmic dust from affecting depth buffer
       />
     </points>
   );

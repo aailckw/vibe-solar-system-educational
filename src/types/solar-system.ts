@@ -83,7 +83,5 @@ export interface SimulationControls {
 export interface NavigationState {
   target: string | null;
   isTransitioning: boolean;
-  autoRotate: boolean;
-  autoRotateSpeed?: number;
   cameraMode: 'free' | 'follow' | 'overview';
 }

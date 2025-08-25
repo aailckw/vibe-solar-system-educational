@@ -1,145 +1,170 @@
-# Planetary Texture Setup Guide
+# Texture Setup Guide
 
-## 🌍 NASA Blue Marble and Planetary Textures Enhancement
+This guide explains how to set up and manage textures for the solar system simulation, including downloading NASA imagery and organizing files properly.
 
-This guide will help you download and set up high-quality planetary textures for the solar system simulation.
+## Directory Structure
 
-## 📁 Directory Structure
-
-All textures should be placed in `public/textures/[planet]/` directories:
+The texture system uses a hierarchical directory structure:
 
 ```
-public/textures/
-├── earth/
-│   ├── 2k_earth_blue_marble.jpg
-│   ├── 2k_earth_clouds.jpg
-│   ├── 2k_earth_nightmap.jpg
-│   ├── 2k_earth_normal_map.jpg
-│   └── 2k_earth_specular_map.jpg
-├── mars/
-│   └── 2k_mars.jpg
-├── jupiter/
-│   └── 2k_jupiter.jpg
-├── saturn/
-│   ├── 2k_saturn.jpg
-│   └── 2k_saturn_ring_alpha.png
-└── [other planets...]
+public/
+  textures/
+    sun/
+    mercury/
+    venus/
+    earth/
+    mars/
+    jupiter/
+    saturn/
+    uranus/
+    neptune/
+    moon/
+    phobos/
+    deimos/
+    io/
+    europa/
+    ganymede/
+    callisto/
+    titan/
+    enceladus/
+    mimas/
+    iapetus/
+    titania/
+    oberon/
+    ariel/
+    umbriel/
+    miranda/
+    triton/
 ```
 
-## 🚀 Priority Downloads (NASA Sources)
+## Downloading NASA Textures
 
-### 1. Earth - NASA Blue Marble
-**Primary Source**: https://visibleearth.nasa.gov/collection/1484/blue-marble
+### Automated Download Scripts
 
-**Downloads:**
-- **Blue Marble Surface**: 
-  - URL: https://visibleearth.nasa.gov/images/57752/blue-marble-land-surface-shallow-water-and-shaded-topography
-  - Save as: `public/textures/earth/2k_earth_blue_marble.jpg`
-  - Resolution: 2048x1024
+The project includes several scripts to help automate texture downloads:
 
-- **Cloud Layer**:
-  - URL: https://visibleearth.nasa.gov/images/57747/blue-marble-clouds  
-  - Save as: `public/textures/earth/2k_earth_clouds.jpg`
-  - Resolution: 2048x1024
+1. `download-nasa-images.ps1` - PowerShell script for Windows
+2. `download-nasa-images.bat` - Batch script for Windows
+3. `download-textures.js` - Node.js script for cross-platform use
 
-- **Night Lights**:
-  - URL: https://visibleearth.nasa.gov/images/55167/earth-at-night-black-marble-2016-color-maps
-  - Save as: `public/textures/earth/2k_earth_nightmap.jpg`
-  - Resolution: 2048x1024
+Run any of these scripts to open NASA image download pages in your browser.
 
-### 2. Mars - NASA/USGS
-**Source**: Mars Global Surveyor data
-- **Surface Texture**: 
-  - Download high-resolution Mars surface texture
-  - Save as: `public/textures/mars/2k_mars.jpg`
+### Manual Download Process
 
-### 3. Jupiter - NASA Juno Mission
-**Source**: https://www.missionjuno.swri.edu/
-- **Atmospheric Bands**:
-  - Save as: `public/textures/jupiter/2k_jupiter.jpg`
+1. Visit NASA's Visible Earth: https://visibleearth.nasa.gov/
+2. Search for planetary body names (e.g., "Earth", "Mars", "Jupiter")
+3. Download the highest resolution imagery available
+4. Save images in the appropriate directory with the naming convention:
+   - Surface texture: `{planet}.jpg`
+   - Cloud texture (Earth only): `{planet}-clouds.png`
+   - Normal map: `{planet}-normal.jpg`
+   - Ring texture (Saturn only): `{planet}-rings.png`
 
-### 4. Saturn - NASA Cassini Mission  
-**Source**: Cassini mission imagery
-- **Planet Surface**:
-  - Save as: `public/textures/saturn/2k_saturn.jpg`
-- **Ring System**:
-  - Save as: `public/textures/saturn/2k_saturn_ring_alpha.png`
+## Texture Requirements
 
-## 🔗 Alternative Texture Sources
+### Resolution Guidelines
 
-### Solar System Scope (Educational License)
-- **URL**: https://www.solarsystemscope.com/textures/
-- **License**: Free for educational use
-- **Quality**: High-resolution 2K textures
-- **Coverage**: All planets + moons
+- Major planets: 2048x1024 or higher
+- Moons: 1024x512 or higher
+- Rings: 2048x2048 square format
 
-### Planetary Pixel Emporium
-- **URL**: http://planetpixelemporium.com/planets.html
-- **Quality**: Scientific accuracy
-- **Coverage**: All major planets
+### File Formats
 
-### NASA Planetary Fact Sheets
-- **URL**: https://nssdc.gsfc.nasa.gov/planetary/factsheet/
-- **Quality**: Official NASA imagery
-- **Coverage**: Comprehensive planetary data
+- JPEG for color textures (baseline compression)
+- PNG for textures requiring transparency (clouds, rings)
+- Avoid progressive JPEG formats
 
-## 🛠 Quick Setup Instructions
+### Naming Conventions
 
-1. **Create directories** (already done):
-   ```bash
-   mkdir -p public/textures/{sun,mercury,venus,earth,mars,jupiter,saturn,uranus,neptune,moon}
-   ```
+```
+{planet}.jpg          # Main surface texture
+{planet}-clouds.png   # Cloud layer (Earth only)
+{planet}-normal.jpg   # Normal/displacement map
+{planet}-rings.png    # Ring system texture (Saturn only)
+```
 
-2. **Download priority textures**:
-   - Start with Earth textures from NASA Blue Marble
-   - Add Mars, Jupiter, Saturn for immediate visual impact
+## Earth-Specific Textures
 
-3. **Test the application**:
-   - Textures will load automatically when files are present
-   - Fallback colors will be used if textures are missing
+### Blue Marble Surface
 
-4. **Verify loading**:
-   - Check browser console for texture loading messages
-   - Planets should show enhanced materials when textures load successfully
+NASA's Blue Marble dataset provides the most accurate Earth visualization:
+- URL: https://visibleearth.nasa.gov/collection/1484/blue-marble
+- Resolution: 21600x10800 pixels
+- Format: JPEG
 
-## 🎨 Texture Specifications
+### Cloud Layer
 
-### Recommended Formats:
-- **Surface textures**: JPG (2048x1024 equirectangular)
-- **Normal maps**: JPG/PNG (2048x1024)
-- **Alpha channels**: PNG (for rings, clouds)
-- **Night maps**: JPG (2048x1024)
+The cloud layer enhances realism with dynamic atmospheric effects:
+- URL: https://visibleearth.nasa.gov/images/57747/blue-marble-clouds
+- Resolution: 21600x10800 pixels
+- Format: PNG with alpha channel
+- File: `earth-clouds.png`
 
-### File Naming Convention:
-- Main texture: `2k_[planet].jpg`
-- Normal map: `2k_[planet]_normal_map.jpg`
-- Clouds: `2k_[planet]_clouds.jpg`
-- Night lights: `2k_[planet]_nightmap.jpg`
-- Rings: `2k_[planet]_ring_alpha.png`
+### Implementation Details
 
-## 🚀 Enhanced Features
+The Earth visualization combines:
+1. Surface texture (land and ocean colors)
+2. Cloud layer (transparency and atmospheric effects)
+3. Subtle atmospheric glow for enhanced realism
 
-Once textures are loaded, you'll see:
-- **Realistic Earth**: NASA Blue Marble with cloud layer animation
-- **Mars Surface**: Detailed crater and surface features
-- **Gas Giant Atmospheres**: Jupiter and Saturn band details
-- **Ring Systems**: Enhanced Saturn rings with transparency
-- **Atmospheric Glow**: Venus and gas giant atmospheric effects
-- **Surface Normal Mapping**: 3D relief on rocky planets
+## Texture Optimization
 
-## 📝 Notes
+### Performance Considerations
 
-- Textures are loaded asynchronously with Suspense boundaries
-- Fallback colors are used during loading or if textures fail
-- All textures are optional - the simulation works without them
-- High-resolution textures may impact loading time on slower connections
+1. Use appropriate resolutions for target hardware
+2. Compress textures without significant quality loss
+3. Enable texture compression in Three.js
+4. Implement texture streaming for large datasets
 
-## 🎓 Educational Benefits
+### Fallback System
 
-With realistic textures:
-- Students see actual spacecraft imagery
-- Scientific accuracy enhances learning
-- Visual engagement increases retention
-- Real NASA data connects to space exploration
+The system includes color fallbacks for missing textures:
+- Each planetary body has a scientifically accurate base color
+- Fallback materials maintain educational value without imagery
+- Error handling prevents crashes from missing files
 
-Start with Earth's Blue Marble texture for immediate dramatic improvement!
+## Troubleshooting
+
+### Common Issues
+
+1. **Missing Textures**
+   - Check file paths and naming conventions
+   - Verify file formats are supported
+   - Ensure files are not corrupted
+
+2. **Loading Errors**
+   - Check browser console for specific error messages
+   - Verify file permissions
+   - Confirm file sizes are reasonable
+
+3. **Performance Problems**
+   - Reduce texture resolutions
+   - Enable texture compression
+   - Implement level-of-detail (LOD) systems
+
+### Testing Textures
+
+1. Verify textures load in the browser
+2. Check for visual artifacts or distortions
+3. Confirm fallback colors display correctly
+4. Test on target hardware configurations
+
+## Educational Value
+
+The texture system enhances learning by providing:
+- Realistic planetary appearances based on spacecraft imagery
+- Scientifically accurate color representations
+- Visual context for understanding planetary characteristics
+- Connection to actual NASA mission data
+
+## Credits and Licensing
+
+All NASA imagery is in the public domain and may be used freely for educational purposes. When redistributing or publishing:
+- Credit NASA and the specific mission
+- Follow NASA's media usage guidelines
+- Include appropriate attribution in documentation
+
+For more information, visit:
+- NASA Visible Earth: https://visibleearth.nasa.gov/
+- NASA Image and Video Library: https://images.nasa.gov/
+- JPL Photojournal: https://photojournal.jpl.nasa.gov/

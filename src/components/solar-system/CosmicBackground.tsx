@@ -8,7 +8,7 @@
 
 import React, { useRef, useMemo, Suspense } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { TextureLoader, BackSide, FrontSide, AdditiveBlending, sRGBEncoding } from 'three';
+import { TextureLoader, BackSide, FrontSide, AdditiveBlending, Mesh } from 'three';
 
 interface CosmicBackgroundProps {
   radius?: number;
@@ -19,7 +19,7 @@ interface CosmicBackgroundProps {
 
 // Real Milky Way panorama background using ESA Gaia or NASA imagery
 function MilkyWayPanorama({ radius }: { radius: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   
   // Try to load real astronomical images in priority order
   const milkyWayTexture = useMemo(() => {
@@ -51,7 +51,7 @@ function MilkyWayPanorama({ radius }: { radius: number }) {
 
   if (milkyWayTexture) {
     // Configure texture for cosmic panorama
-    milkyWayTexture.encoding = sRGBEncoding;
+    // In modern Three.js, sRGB encoding is handled automatically for most textures
     milkyWayTexture.flipY = false;
 
     return (
@@ -191,7 +191,7 @@ function RealNebula({
   };
   animationOffset?: number;
 }) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   
   const nebulaTexture = useMemo(() => {
     try {

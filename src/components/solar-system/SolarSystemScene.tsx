@@ -42,8 +42,8 @@ export default function SolarSystemScene({
         // Enhanced visibility with good size differentiation
         return { distance: 2, size: 1.2 };
       case 'logarithmic':
-        // Compressed scaling for overview
-        return { distance: 1.8, size: 1.5 };
+        // Logarithmic scaling for realistic proportions with manageable display
+        return { distance: 1.2, size: 1.1 };
       default:
         return { distance: 2, size: 1.2 };
     }
@@ -61,12 +61,6 @@ export default function SolarSystemScene({
         orbitControlsRef.current.update();
         console.log(`Free camera mode: Targeting ${lastFollowedObject.current}`);
       }
-    } else if (navigation.cameraMode === 'overview') {
-      // When switching to overview mode, reset to Sun
-      orbitControlsRef.current.target.set(0, 0, 0);
-      orbitControlsRef.current.update();
-      lastFollowedObject.current = null;
-      console.log('Overview mode: Targeting Sun');
     }
   }, [navigation.cameraMode]);
 
@@ -149,7 +143,14 @@ export default function SolarSystemScene({
   };
 
   const renderBody = (body: PlanetaryBody, isRoot = true) => {
-    const distance = body.distanceFromSun ? body.distanceFromSun * scaleFactors.distance * 25 : 0;
+    // Calculate distance using logarithmic scaling for the 'logarithmic' mode
+    let distance: number;
+    if (controls.scaleMode === 'logarithmic' && body.distanceFromSun) {
+      // Use logarithmic scaling for distances: log(AU + 1) to handle Sun (0 AU)
+      distance = Math.log(body.distanceFromSun + 1) * 20;
+    } else {
+      distance = body.distanceFromSun ? body.distanceFromSun * scaleFactors.distance * 25 : 0;
+    }
     
     // Calculate size with realistic relative scaling for educational purposes
     // Size hierarchy: Sun > Gas Giants > Terrestrial Planets > Moons
@@ -163,27 +164,35 @@ export default function SolarSystemScene({
       const earthRadius = 6371; // km - Earth as reference
       const relativeToEarth = body.radius / earthRadius;
       
-      // Apply size scaling based on planetary category
-      if (body.radius > 20000) {
-        // Gas giants (Jupiter: 69,911 km, Saturn: 58,232 km, etc.)
-        // Scale: Jupiter ≈ 4.5, Saturn ≈ 3.8, Uranus ≈ 2.5, Neptune ≈ 2.4
-        size = Math.max(relativeToEarth * 0.65, 2.2);
-      } else if (body.radius > 3000) {
-        // Large terrestrial planets (Earth: 6,371 km, Venus: 6,052 km)
-        // Scale: Earth ≈ 2.0, Venus ≈ 1.9
-        size = Math.max(relativeToEarth * 1.6, 1.2);
-      } else if (body.radius > 1500) {
-        // Small planets and large moons (Mars: 3,390 km, Moon: 1,737 km)
-        // Scale: Mars ≈ 1.7, Moon ≈ 1.1
-        size = Math.max(relativeToEarth * 2.0, 0.9);
+      if (controls.scaleMode === 'logarithmic') {
+        // Use logarithmic scaling for sizes to maintain relative proportions
+        // log(radius/earth_radius + 1) to handle small bodies
+        size = Math.log(relativeToEarth + 1) * 2.0;
+        // Ensure minimum size for visibility
+        size = Math.max(size, 0.4);
       } else {
-        // Very small bodies (Mercury: 2,440 km)
-        // Scale: Mercury ≈ 1.2
-        size = Math.max(relativeToEarth * 3.0, 0.7);
+        // Apply size scaling based on planetary category
+        if (body.radius > 20000) {
+          // Gas giants (Jupiter: 69,911 km, Saturn: 58,232 km, etc.)
+          // Scale: Jupiter ≈ 4.5, Saturn ≈ 3.8, Uranus ≈ 2.5, Neptune ≈ 2.4
+          size = Math.max(relativeToEarth * 0.65, 2.2);
+        } else if (body.radius > 3000) {
+          // Large terrestrial planets (Earth: 6,371 km, Venus: 6,052 km)
+          // Scale: Earth ≈ 2.0, Venus ≈ 1.9
+          size = Math.max(relativeToEarth * 1.6, 1.2);
+        } else if (body.radius > 1500) {
+          // Small planets and large moons (Mars: 3,390 km, Moon: 1,737 km)
+          // Scale: Mars ≈ 1.7, Moon ≈ 1.1
+          size = Math.max(relativeToEarth * 2.0, 0.9);
+        } else {
+          // Very small bodies (Mercury: 2,440 km)
+          // Scale: Mercury ≈ 1.2
+          size = Math.max(relativeToEarth * 3.0, 0.7);
+        }
+        
+        // Apply scale mode factor
+        size *= scaleFactors.size;
       }
-      
-      // Apply scale mode factor
-      size *= scaleFactors.size;
     }
     
     return (

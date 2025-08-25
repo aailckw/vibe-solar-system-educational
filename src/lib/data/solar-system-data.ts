@@ -385,6 +385,162 @@ export const solarSystemData: SolarSystemData = {
       ]
     },
     {
+      id: 'ceres',
+      name: 'Ceres',
+      type: 'dwarf-planet',
+      radius: 473,
+      mass: 9.393e20,
+      density: 2.161,
+      gravity: 0.27,
+      escapeVelocity: 0.51,
+      distanceFromSun: 2.77,
+      orbitalPeriod: 1682,
+      rotationPeriod: 9.1,
+      axialTilt: 4,
+      eccentricity: 0.076,
+      description: 'Ceres is the largest object in the asteroid belt between Mars and Jupiter, and the only dwarf planet in the inner solar system.',
+      keyFacts: [
+        'Largest object in the asteroid belt',
+        'Only dwarf planet in the inner solar system',
+        'Contains about 25% of the asteroid belt\'s total mass',
+        'Discovered in 1801 by Giuseppe Piazzi',
+        'Visited by NASA\'s Dawn spacecraft (2015-2018)'
+      ],
+      discovery: {
+        discoveredBy: 'Giuseppe Piazzi',
+        discoveryDate: '1801',
+        method: 'Telescope observation'
+      },
+      images: ['/textures/asteroids/ceres.jpg'],
+      texture: '/textures/asteroids/ceres.jpg',
+      funFacts: [
+        'Named after the Roman goddess of agriculture',
+        'Contains water ice in its subsurface',
+        'Has a thin water vapor atmosphere',
+        'May have a subsurface ocean'
+      ],
+      comparisons: {
+        earth: 'Ceres is about 1/13th the diameter of Earth'
+      }
+    },
+    {
+      id: 'vesta',
+      name: 'Vesta',
+      type: 'asteroid',
+      radius: 263,
+      mass: 2.59e20,
+      density: 3.456,
+      gravity: 0.22,
+      escapeVelocity: 0.36,
+      distanceFromSun: 2.36,
+      orbitalPeriod: 1326,
+      rotationPeriod: 5.3,
+      axialTilt: 27,
+      eccentricity: 0.089,
+      description: 'Vesta is the second-most massive body in the asteroid belt, accounting for about 9% of the belt\'s total mass.',
+      keyFacts: [
+        'Second-most massive body in the asteroid belt',
+        'Accounts for about 9% of the belt\'s mass',
+        'Has a basaltic surface with a large impact crater',
+        'Visited by NASA\'s Dawn spacecraft (2011-2012)',
+        'Differentiated body with a metallic core'
+      ],
+      discovery: {
+        discoveredBy: 'Heinrich Wilhelm Olbers',
+        discoveryDate: '1807',
+        method: 'Telescope observation'
+      },
+      images: ['/textures/asteroids/vesta.jpg'],
+      texture: '/textures/asteroids/vesta.jpg',
+      funFacts: [
+        'Has a massive impact crater called Rheasilvia',
+        'Is the source of HED meteorites that fall to Earth',
+        'Has a distinctive dark hemisphere',
+        'Rotates once every 5.3 hours'
+      ],
+      comparisons: {
+        earth: 'Vesta is about 1/20th the diameter of Earth'
+      }
+    },
+    {
+      id: 'pallas',
+      name: 'Pallas',
+      type: 'asteroid',
+      radius: 258,
+      mass: 2.11e20,
+      density: 2.83,
+      gravity: 0.19,
+      escapeVelocity: 0.33,
+      distanceFromSun: 2.77,
+      orbitalPeriod: 1686,
+      rotationPeriod: 7.8,
+      axialTilt: 78,
+      eccentricity: 0.231,
+      description: 'Pallas is the third-largest asteroid in the solar system and one of the largest in the asteroid belt.',
+      keyFacts: [
+        'Third-largest asteroid in the solar system',
+        'Highly inclined orbit (34.8° to the ecliptic)',
+        'Highly tilted rotation axis (78°)',
+        'Discovered in 1802 by Heinrich Wilhelm Olbers',
+        'May be a protoplanet that never fully formed'
+      ],
+      discovery: {
+        discoveredBy: 'Heinrich Wilhelm Olbers',
+        discoveryDate: '1802',
+        method: 'Telescope observation'
+      },
+      images: ['/textures/asteroids/pallas.jpg'],
+      texture: '/textures/asteroids/pallas.jpg',
+      funFacts: [
+        'Has a highly unusual orbit and rotation',
+        'May be composed of water ice and silicate rock',
+        'One of the first asteroids discovered',
+        'Named after the Greek goddess of wisdom'
+      ],
+      comparisons: {
+        earth: 'Pallas is about 1/20th the diameter of Earth'
+      }
+    },
+    {
+      id: 'hygiea',
+      name: 'Hygiea',
+      type: 'asteroid',
+      radius: 215,
+      mass: 8.67e19,
+      density: 1.77,
+      gravity: 0.11,
+      escapeVelocity: 0.23,
+      distanceFromSun: 3.14,
+      orbitalPeriod: 2031,
+      rotationPeriod: 13.8,
+      axialTilt: 0,
+      eccentricity: 0.117,
+      description: 'Hygiea is the fourth-largest asteroid in the solar system and the largest of the dark C-type asteroids.',
+      keyFacts: [
+        'Fourth-largest asteroid in the solar system',
+        'Largest of the dark C-type asteroids',
+        'Located in the outer region of the asteroid belt',
+        'Discovered in 1849 by Annibale de Gasparis',
+        'May be nearly spherical, qualifying it as a dwarf planet'
+      ],
+      discovery: {
+        discoveredBy: 'Annibale de Gasparis',
+        discoveryDate: '1849',
+        method: 'Telescope observation'
+      },
+      images: ['/textures/asteroids/hygiea.jpg'],
+      texture: '/textures/asteroids/hygiea.jpg',
+      funFacts: [
+        'Named after the Greek goddess of health',
+        'Has a very low density, suggesting it may be a rubble pile',
+        'May be the source of the Hygiea family of asteroids',
+        'Appears to be nearly spherical in shape'
+      ],
+      comparisons: {
+        earth: 'Hygiea is about 1/25th the diameter of Earth'
+      }
+    },
+    {
       id: 'jupiter',
       name: 'Jupiter',
       type: 'planet',

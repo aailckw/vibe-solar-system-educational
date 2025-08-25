@@ -7,6 +7,7 @@ import { Text, Billboard } from '@react-three/drei';
 import { PlanetaryBody, SimulationControls } from '@/types/solar-system';
 import { usePlanetTextures } from '@/lib/textures/planetaryTextures';
 import { PlanetMaterial, CloudLayer, AtmosphereGlow, PlanetRings } from './PlanetMaterials';
+import SunEffects from './SunEffects';
 
 interface PlanetProps {
   body: PlanetaryBody;
@@ -102,14 +103,9 @@ export default function Planet({
       orbitGroupRef.current.rotation.y = orbitalPositionRef.current;
     }
 
-    // Pulsing effect for selected planet (independent of time scale)
-    // Disable pulsing when in follow mode to prevent expansion/contraction while following
-    const isInFollowMode = navigation?.cameraMode === 'follow' && controls.selectedBody === body.id;
-    
-    if (isSelected && meshRef.current && !isInFollowMode) {
-      const pulseScale = 1 + Math.sin(Date.now() * 0.004) * 0.1;
-      meshRef.current.scale.setScalar(pulseScale);
-    } else if (meshRef.current) {
+    // Removed pulsing effect for selected planet - not realistic for a solar system simulation
+    // Planets should maintain their natural size at all times
+    if (meshRef.current) {
       meshRef.current.scale.setScalar(1);
     }
   });
@@ -180,8 +176,14 @@ export default function Planet({
               }}
             >
               <sphereGeometry args={[size, 64, 64]} />
-              <PlanetMaterial body={body} textures={planetTextures} />
+              <PlanetMaterial body={body} textures={planetTextures} size={size} />
             </mesh>
+            
+            {/* Special effects for the Sun */}
+            {body.id === 'sun' && <SunEffects size={size} />}
+            
+            {/* Cloud layer for Earth */}
+            <CloudLayer size={size} textures={planetTextures} controls={controls} />
             
             {/* Atmospheric glow for gas giants */}
             <AtmosphereGlow size={size} body={body} />

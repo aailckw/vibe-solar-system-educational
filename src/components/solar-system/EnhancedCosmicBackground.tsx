@@ -169,6 +169,18 @@ function HighQualityStars({ radius }: { radius: number }) {
     };
   }, [radius]);
 
+  // Use frame to ensure stars are always rendered with proper depth
+  useFrame(({ gl, scene, camera }) => {
+    if (pointsRef.current) {
+      // Temporarily disable depth testing to render stars on top
+      gl.clearDepth();
+      const originalAutoClear = gl.autoClear;
+      gl.autoClear = false;
+      gl.render(scene, camera);
+      gl.autoClear = originalAutoClear;
+    }
+  });
+
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
@@ -198,6 +210,7 @@ function HighQualityStars({ radius }: { radius: number }) {
         size={2}
         sizeAttenuation={false}
         alphaTest={0.1}
+        depthWrite={false} // Prevent stars from affecting the depth buffer
       />
     </points>
   );
@@ -228,6 +241,7 @@ function VolumetricNebulae({ radius }: { radius: number }) {
             transparent
             opacity={0.1}
             fog={false}
+            depthWrite={false} // Allow stars to be seen through nebulae
           />
         </mesh>
       ))}

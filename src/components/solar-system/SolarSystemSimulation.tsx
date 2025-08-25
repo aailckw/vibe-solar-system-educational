@@ -4,7 +4,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import SolarSystemScene from './SolarSystemScene';
-import EnhancedCosmicBackground from './EnhancedCosmicBackground';
+import AsteroidBelt from './AsteroidBelt';
 import InfoPanel from '@/components/panels/InfoPanel';
 import ControlPanel from '@/components/controls/ControlPanel';
 import NavigationPanel from '@/components/controls/NavigationPanel';
@@ -16,25 +16,29 @@ export default function SolarSystemSimulation() {
   const [selectedBody, setSelectedBody] = useState<string | null>(null);
   const orbitControlsRef = useRef<any>(null); // Ref for OrbitControls
   const [controls, setControls] = useState<SimulationControls>({
-    timeScale: 0, // Start paused by default
+    timeScale: 1/24, // Changed to 1/24 to set default speed to 1 sec = 1 hour (24x)
     showOrbits: true,
     showLabels: true,
     scaleMode: 'visible',
     selectedBody: null,
-    demoMode: 'real-scale', // Highlight the demo mode
   });
   
   const [navigation, setNavigation] = useState<NavigationState>({
-    target: null,
+    target: 'sun',
     isTransitioning: false,
-    autoRotate: true,
-    autoRotateSpeed: 0.3,
-    cameraMode: 'free',
+    cameraMode: 'follow',
   });
 
   const handleBodySelect = useCallback((bodyId: string | null) => {
     setSelectedBody(bodyId);
     setControls(prev => ({ ...prev, selectedBody: bodyId }));
+    if (bodyId) {
+      setNavigation(prev => ({
+        ...prev,
+        target: bodyId,
+        cameraMode: 'follow'
+      }));
+    }
   }, []);
 
   const handleNavigateTo = useCallback((bodyId: string) => {
@@ -58,23 +62,25 @@ export default function SolarSystemSimulation() {
     : null;
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-space-950">
+    <div className="relative w-full h-screen overflow-hidden bg-black">
       {/* 3D Scene */}
       <Canvas
-        camera={{ position: [0, 50, 200], fov: 75 }}
+        camera={{ position: [0, 20, 50], fov: 75 }}
         className="w-full h-full"
       >
-        <color attach="background" args={['#020617']} />
-        <ambientLight intensity={0.3} />
-        <pointLight position={[0, 0, 0]} intensity={2} />
-        <directionalLight position={[10, 10, 5]} intensity={0.5} />
+        {/* Pure black background */}
+        <color attach="background" args={['#000000']} />
+        <ambientLight intensity={0.3} /> {/* Increased ambient light for better planet visibility */}
+        <pointLight position={[0, 0, 0]} intensity={10} distance={3000} decay={1} /> {/* Increased sun light intensity */}
+        <directionalLight position={[10, 10, 5]} intensity={1.0} /> {/* Increased directional light for better illumination */}
         
-        <EnhancedCosmicBackground
-          radius={2000}
-          useEquirectangular={true}
-          useCubeMap={false}
-          showDeepSpace={true}
-          brightness={1.0}
+        {/* Realistic asteroid belt between Mars and Jupiter */}
+        <AsteroidBelt 
+          innerRadius={2.1} 
+          outerRadius={3.3} 
+          asteroidCount={2000} 
+          maxHeight={0.2} 
+          sizeScale={1.0} 
         />
         
         <SolarSystemScene
@@ -93,34 +99,13 @@ export default function SolarSystemSimulation() {
           zoomSpeed={0.6}
           panSpeed={0.8}
           rotateSpeed={0.4}
-          minDistance={5}
-          maxDistance={2000}
-          autoRotate={navigation.autoRotate && !navigation.isTransitioning}
-          autoRotateSpeed={navigation.autoRotateSpeed || 0.3}
+          minDistance={2}
+          maxDistance={2000} // Increased to maximum for better viewing of the entire solar system
         />
       </Canvas>
 
       {/* UI Overlays */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Demo Banner */}
-        {controls.demoMode === 'real-scale' && (
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 pointer-events-auto">
-            <div className="panel-glass px-6 py-3 bg-gradient-to-r from-blue-900/80 to-green-900/80 border border-blue-400/30">
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <div>
-                  <h2 className="text-white font-bold text-lg">
-                    Demo: Real-in-Scale Solar System
-                  </h2>
-                  <p className="text-blue-200 text-sm">
-                    Scientifically accurate planetary motion • All relative speeds preserved
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        
         {/* Texture Loading Progress */}
         <TextureLoadingProgress />
         
@@ -161,11 +146,6 @@ export default function SolarSystemSimulation() {
               <p className="text-slate-300 text-sm">
                 Click on any celestial body to learn more about it
               </p>
-              {controls.demoMode === 'real-scale' && (
-                <p className="text-green-400 text-xs mt-1 font-medium">
-                  ✓ Real-Scale Demo Active - Scientific timing preserved
-                </p>
-              )}
             </div>
           </div>
         )}

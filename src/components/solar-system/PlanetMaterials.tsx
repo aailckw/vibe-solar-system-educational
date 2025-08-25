@@ -1,27 +1,92 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh, DoubleSide } from 'three';
+import { Mesh, DoubleSide, AdditiveBlending } from 'three';
 import { PlanetaryBody } from '@/types/solar-system';
 
-interface PlanetMaterialProps {
-  body: PlanetaryBody;
-  textures: any;
-  size: number;
+// Specialized Sun material with enhanced glow effect
+export function SunMaterial({ textures }: { textures: any }) {
+  const materialRef = useRef<any>(null);
+  
+  useFrame((state) => {
+    if (materialRef.current) {
+      // Enhanced emissive intensity variation for a more dynamic pulsing effect
+      const time = state.clock.elapsedTime;
+      const pulse = 2.0 + Math.sin(time * 0.5) * 0.3;
+      materialRef.current.emissiveIntensity = pulse;
+      
+      // Enhanced color variation for more dynamic appearance
+      const colorShift = Math.sin(time * 0.3) * 0.1;
+      materialRef.current.emissive.setRGB(
+        1.0,
+        0.85 + colorShift,
+        0.0
+      );
+    }
+  });
+  
+  return (
+    <meshStandardMaterial
+      ref={materialRef}
+      map={textures.textures?.map}
+      emissive="#FFD700"
+      emissiveIntensity={3.0} // Increased emissive intensity
+      roughness={0.0}
+      metalness={1.0}
+      envMapIntensity={3.0}
+      emissiveMap={textures.textures?.map}
+    />
+  );
+}
+
+// Sun glow effect - a larger, softer glow around the Sun
+export function SunGlow({ size }: { size: number }) {
+  const glowRef = useRef<Mesh>(null);
+  
+  useFrame((state) => {
+    if (glowRef.current) {
+      // Enhanced pulsing animation for the glow with multiple frequencies for more natural effect
+      const time = state.clock.elapsedTime;
+      const pulse1 = Math.sin(time * 0.4) * 0.07;
+      const pulse2 = Math.sin(time * 1.1) * 0.04;
+      const pulse3 = Math.sin(time * 2.3) * 0.03;
+      const totalPulse = 1 + pulse1 + pulse2 + pulse3;
+      glowRef.current.scale.setScalar(totalPulse);
+      
+      // Enhanced color shift for more dynamic appearance
+      const colorShift = Math.sin(time * 0.4) * 0.08;
+      (glowRef.current.material as any).color.setRGB(
+        1.0 + colorShift,
+        0.65 + colorShift * 0.5,
+        0.0
+      );
+    }
+  });
+  
+  return (
+    <mesh ref={glowRef}>
+      <sphereGeometry args={[size * 0.18, 32, 32]} /> // Reduced radius by 10x
+      <meshBasicMaterial
+        color="#FFA500"
+        transparent
+        opacity={0.4} // Increased opacity for more visible glow
+        side={DoubleSide}
+        blending={AdditiveBlending}
+        depthWrite={false}
+      />
+    </mesh>
+  );
 }
 
 // Enhanced material component for different planetary body types
-export function PlanetMaterial({ body, textures }: { body: PlanetaryBody; textures: any }) {
+export function PlanetMaterial({ body, textures, size }: { body: PlanetaryBody; textures: any; size: number }) {
   if (textures?.hasTextures && textures.textures) {
     switch (body.id) {
       case 'sun':
         return (
-          <meshStandardMaterial
-            map={textures.textures.map}
-            emissive="#FDB813"
-            emissiveIntensity={0.3}
-            roughness={1.0}
-            metalness={0.0}
-          />
+          <>
+            <SunMaterial textures={textures} />
+            <SunGlow size={size} />
+          </>
         );
         
       case 'earth':
@@ -29,8 +94,10 @@ export function PlanetMaterial({ body, textures }: { body: PlanetaryBody; textur
         return (
           <meshStandardMaterial
             map={textures.textures.map}
-            roughness={0.8} // Natural surface roughness like Mars
-            metalness={0.0} // No metallic properties for natural appearance
+            roughness={0.7} // Reduced roughness for better light reflection
+            metalness={0.1} // Added slight metalness for better light reflection
+            emissive="#1E4D72" // Added subtle emissive color
+            emissiveIntensity={0.2} // Subtle emissive intensity
           />
         );
         
@@ -38,8 +105,10 @@ export function PlanetMaterial({ body, textures }: { body: PlanetaryBody; textur
         return (
           <meshStandardMaterial
             map={textures.textures.map}
-            roughness={0.9}
-            metalness={0.0}
+            roughness={0.7} // Reduced roughness
+            metalness={0.1} // Added slight metalness
+            emissive="#CD5C5C" // Added subtle emissive color
+            emissiveIntensity={0.15} // Subtle emissive intensity
           />
         );
         
@@ -47,10 +116,10 @@ export function PlanetMaterial({ body, textures }: { body: PlanetaryBody; textur
         return (
           <meshStandardMaterial
             map={textures.textures.map}
-            roughness={0.1}
-            metalness={0.0}
+            roughness={0.7} // Reduced roughness
+            metalness={0.1} // Added slight metalness
             emissive="#FFC649"
-            emissiveIntensity={0.1}
+            emissiveIntensity={0.2} // Increased emissive intensity
           />
         );
         
@@ -59,8 +128,10 @@ export function PlanetMaterial({ body, textures }: { body: PlanetaryBody; textur
         return (
           <meshStandardMaterial
             map={textures.textures.map}
-            roughness={0.8}
-            metalness={0.1}
+            roughness={0.7} // Reduced roughness
+            metalness={0.1} // Added slight metalness
+            emissive="#D8CA9D" // Added subtle emissive color for gas giants
+            emissiveIntensity={0.15} // Subtle emissive intensity
           />
         );
         
@@ -69,8 +140,10 @@ export function PlanetMaterial({ body, textures }: { body: PlanetaryBody; textur
         return (
           <meshStandardMaterial
             map={textures.textures.map}
-            roughness={0.6}
-            metalness={0.2}
+            roughness={0.7} // Reduced roughness
+            metalness={0.1} // Added slight metalness
+            emissive={body.id === 'uranus' ? "#4FD0E7" : "#4B70DD"} // Respective emissive colors
+            emissiveIntensity={0.2} // Subtle emissive intensity
           />
         );
         
@@ -78,8 +151,10 @@ export function PlanetMaterial({ body, textures }: { body: PlanetaryBody; textur
         return (
           <meshStandardMaterial
             map={textures.textures.map}
-            roughness={0.9}
-            metalness={0.0}
+            roughness={0.8}
+            metalness={0.1} // Added slight metalness
+            emissive="#C0C0C0" // Added subtle emissive color
+            emissiveIntensity={0.1} // Very subtle emissive intensity
           />
         );
         
@@ -96,20 +171,22 @@ export function PlanetMaterial({ body, textures }: { body: PlanetaryBody; textur
   
   // Fallback material with enhanced colors and properties - Blue Marble inspired
   const fallbackProperties = {
-    sun: { color: '#FDB813', emissive: '#FDB813', emissiveIntensity: 0.3, roughness: 1.0, metalness: 0.0 },
-    mercury: { color: '#8C7853', roughness: 0.9, metalness: 0.1 },
-    venus: { color: '#FFC649', emissive: '#FFC649', emissiveIntensity: 0.05, roughness: 0.1, metalness: 0.0 },
+    sun: { color: '#FFD700', emissive: '#FFD700', emissiveIntensity: 1.5, roughness: 0.0, metalness: 1.0 }, // Enhanced sun properties
+    mercury: { color: '#8C7853', roughness: 0.8, metalness: 0.1, emissive: '#8C7853', emissiveIntensity: 0.15 }, // Enhanced mercury
+    venus: { color: '#FFC649', emissive: '#FFC649', emissiveIntensity: 0.2, roughness: 0.7, metalness: 0.1 }, // Enhanced venus
     earth: { 
-      color: '#6B93D6', // Natural earth color like Mars approach
-      roughness: 0.8, // Natural surface roughness like Mars
-      metalness: 0.0 // No metallic properties like Mars
+      color: '#6B93D6', // Natural earth color
+      roughness: 0.7, // Reduced roughness for better light reflection
+      metalness: 0.1, // Added slight metalness for better light reflection
+      emissive: '#1E4D72', // Added subtle emissive color
+      emissiveIntensity: 0.2 // Subtle emissive intensity
     },
-    mars: { color: '#CD5C5C', roughness: 0.9, metalness: 0.0 },
-    jupiter: { color: '#D8CA9D', roughness: 0.8, metalness: 0.1 },
-    saturn: { color: '#FAD5A5', roughness: 0.8, metalness: 0.1 },
-    uranus: { color: '#4FD0E7', roughness: 0.6, metalness: 0.2 },
-    neptune: { color: '#4B70DD', roughness: 0.6, metalness: 0.2 },
-    moon: { color: '#C0C0C0', roughness: 0.9, metalness: 0.0 }
+    mars: { color: '#CD5C5C', roughness: 0.7, metalness: 0.1, emissive: '#CD5C5C', emissiveIntensity: 0.15 }, // Enhanced mars
+    jupiter: { color: '#D8CA9D', roughness: 0.7, metalness: 0.1, emissive: '#D8CA9D', emissiveIntensity: 0.15 }, // Enhanced jupiter
+    saturn: { color: '#FAD5A5', roughness: 0.7, metalness: 0.1, emissive: '#FAD5A5', emissiveIntensity: 0.15 }, // Enhanced saturn
+    uranus: { color: '#4FD0E7', roughness: 0.7, metalness: 0.1, emissive: '#4FD0E7', emissiveIntensity: 0.2 }, // Enhanced uranus
+    neptune: { color: '#4B70DD', roughness: 0.7, metalness: 0.1, emissive: '#4B70DD', emissiveIntensity: 0.2 }, // Enhanced neptune
+    moon: { color: '#C0C0C0', roughness: 0.8, metalness: 0.1, emissive: '#C0C0C0', emissiveIntensity: 0.1 } // Enhanced moon
   };
   
   const props = fallbackProperties[body.id as keyof typeof fallbackProperties] || 
@@ -149,15 +226,15 @@ export function CloudLayer({ size, textures, controls }: { size: number; texture
   
   return (
     <mesh ref={cloudRef}>
-      <sphereGeometry args={[size * 1.005, 32, 32]} />
+      <sphereGeometry args={[size * 1.005, 64, 64]} />
       <meshStandardMaterial
         map={textures.textures.clouds}
         transparent
-        opacity={0.5} // Enhanced cloud opacity for Blue Marble effect
+        opacity={0.8} // Increased opacity for more visible clouds
         side={DoubleSide}
         alphaTest={0.1}
         emissive="#E6F3FF" // Subtle cloud glow for Blue Marble effect
-        emissiveIntensity={0.05} // Very subtle cloud illumination
+        emissiveIntensity={0.15} // Increased emissive intensity for brighter clouds
       />
     </mesh>
   );
@@ -177,11 +254,11 @@ export function AtmosphereGlow({ size, body }: { size: number; body: PlanetaryBo
   };
   
   const glowColor = glowColors[body.id as keyof typeof glowColors];
-  const glowIntensity = body.id === 'earth' ? 0.15 : 0.1; // Enhanced intensity for Blue Marble Earth
+  const glowIntensity = body.id === 'earth' ? 0.4 : 0.5; // Increased intensity for more visible glow
   
   return (
     <mesh>
-      <sphereGeometry args={[size * 1.02, 32, 32]} />
+      <sphereGeometry args={[size * 1.025, 32, 32]} />
       <meshBasicMaterial
         color={glowColor}
         transparent
@@ -227,6 +304,35 @@ export function PlanetRings({ size, body, textures, controls }: { size: number; 
   
   const ringRotation = getRingRotation();
   
+  // Jupiter gets specialized rings
+  if (body.id === 'jupiter' && textures?.hasTextures) {
+    // Check if we have a ring texture, otherwise use scientifically accurate colors
+    const hasRingTexture = textures.textures?.ring !== undefined;
+    
+    // If texture fails to load, provide helpful console message
+    if (!hasRingTexture) {
+      console.info('Jupiter ring texture not found. Using fallback colors instead.');
+      console.info('See JUPITER_RING_TEXTURE_SETUP.md for instructions on adding the texture.');
+    }
+    
+    return (
+      <mesh ref={ringRef} rotation={ringRotation}>
+        {/* Jupiter's rings are thin and faint with a distinct inner and outer region */}
+        <ringGeometry args={[size * 1.4, size * 1.8, 128]} /> {/* Higher resolution for detail */}
+        <meshStandardMaterial
+          map={hasRingTexture ? textures.textures.ring : null}
+          color={hasRingTexture ? "#FFFFFF" : "#8A7F66"} // Dusty brown-gray if no texture
+          transparent
+          opacity={0.25} // Jupiter's rings are very faint
+          roughness={0.9}
+          metalness={0.0}
+          side={DoubleSide}
+          depthWrite={false} // Better transparency handling
+        />
+      </mesh>
+    );
+  }
+  
   // Saturn gets special detailed rings
   if (body.id === 'saturn' && textures?.hasTextures && textures.textures?.ring) {
     return (
@@ -235,7 +341,9 @@ export function PlanetRings({ size, body, textures, controls }: { size: number; 
         <meshStandardMaterial
           map={textures.textures.ring}
           transparent
-          opacity={0.8}
+          opacity={0.95} // Maintained high opacity for visible rings
+          roughness={0.9} // Added high roughness to prevent unrealistic reflections
+          metalness={0.0} // Removed metalness for more realistic appearance
           side={DoubleSide}
         />
       </mesh>
@@ -250,7 +358,9 @@ export function PlanetRings({ size, body, textures, controls }: { size: number; 
         <meshStandardMaterial
           color="#444444"
           transparent
-          opacity={0.3}
+          opacity={0.6} // Maintained opacity for visible rings
+          roughness={0.9} // Added high roughness to prevent unrealistic reflections
+          metalness={0.0} // Removed metalness for more realistic appearance
           side={DoubleSide}
         />
       </mesh>
@@ -264,7 +374,9 @@ export function PlanetRings({ size, body, textures, controls }: { size: number; 
       <meshStandardMaterial
         color="#cccccc"
         transparent
-        opacity={0.6}
+        opacity={0.9} // Maintained opacity for visible rings
+        roughness={0.9} // Added high roughness to prevent unrealistic reflections
+        metalness={0.0} // Removed metalness for more realistic appearance
         side={DoubleSide}
       />
     </mesh>

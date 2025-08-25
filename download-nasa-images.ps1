@@ -1,5 +1,49 @@
-# NASA Image Download Helper Script
-# This script provides direct download commands for the NASA images
+# NASA Image Download Helper
+# Opens browser tabs with NASA image download pages for planetary textures
+
+# Define URLs for NASA image searches
+$urls = @(
+    # Earth with cloud layer
+    "https://visibleearth.nasa.gov/images/57752/blue-marble-land-surface-shallow-water-and-shaded-topography"
+    "https://visibleearth.nasa.gov/images/57747/blue-marble-clouds"
+    
+    # Other planets
+    "https://visibleearth.nasa.gov/search.html?q=mercury"
+    "https://visibleearth.nasa.gov/search.html?q=venus"
+    "https://visibleearth.nasa.gov/search.html?q=mars"
+    "https://visibleearth.nasa.gov/search.html?q=jupiter"
+    "https://visibleearth.nasa.gov/search.html?q=saturn"
+    "https://visibleearth.nasa.gov/search.html?q=uranus"
+    "https://visibleearth.nasa.gov/search.html?q=neptune"
+    
+    # Moons
+    "https://visibleearth.nasa.gov/search.html?q=moon"
+    "https://photojournal.jpl.nasa.gov/search/Moons"
+    
+    # Additional resources
+    "https://solarsystem.nasa.gov/moons/earths-moon/overview/"
+    "https://nssdc.gsfc.nasa.gov/planetary/factsheet/"
+    "https://photojournal.jpl.nasa.gov/"
+)
+
+Write-Host "Opening NASA image download pages..." -ForegroundColor Green
+Write-Host ""
+
+# Open each URL in the default browser
+foreach ($url in $urls) {
+    Write-Host "Opening: $url" -ForegroundColor Yellow
+    Start-Process $url
+    Start-Sleep -Seconds 1
+}
+
+Write-Host ""
+Write-Host "NASA image download pages have been opened in your browser." -ForegroundColor Green
+Write-Host "Please download the highest resolution imagery available for each planetary body." -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Special note for Earth:" -ForegroundColor Magenta
+Write-Host "- Download the Blue Marble surface texture" -ForegroundColor White
+Write-Host "- Download the separate cloud layer for realistic visualization" -ForegroundColor White
+Write-Host "- Save files as earth.jpg and earth-clouds.png respectively" -ForegroundColor White
 
 # Create the backgrounds directory if it doesn't exist
 New-Item -ItemType Directory -Path "public\textures\backgrounds" -Force

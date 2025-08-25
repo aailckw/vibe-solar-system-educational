@@ -49,8 +49,7 @@ export default function NavigationPanel({
   };
 
   const handleOverview = () => {
-    onBodySelect(null);
-    setIsOpen(false);
+    handleNavigate('sun');
   };
 
   return (
@@ -90,7 +89,7 @@ export default function NavigationPanel({
               className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-slate-700 transition-colors text-left"
             >
               <Home className="w-4 h-4 text-blue-400" />
-              <span className="text-white">Solar System Overview</span>
+              <span className="text-white">View the Sun</span>
             </button>
           </div>
 

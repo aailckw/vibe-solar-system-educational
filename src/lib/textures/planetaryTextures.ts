@@ -22,7 +22,11 @@ interface SaturnTextureConfig extends BaseTextureConfig {
   ring?: string;
 }
 
-type TextureConfig = BaseTextureConfig | EarthTextureConfig | MarsTextureConfig | SaturnTextureConfig;
+interface JupiterTextureConfig extends BaseTextureConfig {
+  ring?: string;
+}
+
+type TextureConfig = BaseTextureConfig | EarthTextureConfig | MarsTextureConfig | SaturnTextureConfig | JupiterTextureConfig;
 
 // Texture configurations for each planetary body
 export const PLANET_TEXTURES: Record<string, TextureConfig> = {
@@ -40,16 +44,18 @@ export const PLANET_TEXTURES: Record<string, TextureConfig> = {
   },
   earth: {
     map: '/textures/earth/earth.jpg', // Real Earth texture
+    clouds: '/textures/earth/earth-clouds.png', // NASA Blue Marble cloud layer
     fallback: '#6B93D6' // Natural earth color as fallback
-  },
+  } as EarthTextureConfig,
   mars: {
     map: '/textures/mars/mars.jpg',
     fallback: '#CD5C5C'
   } as MarsTextureConfig,
   jupiter: {
     map: '/textures/jupiter/jupiter.jpg',
+    ring: '/textures/jupiter/jupiter-rings.png',
     fallback: '#D8CA9D'
-  },
+  } as JupiterTextureConfig,
   saturn: {
     map: '/textures/saturn/saturn.jpg',
     ring: '/textures/saturn/saturn-rings.png',
@@ -165,6 +171,16 @@ export function usePlanetTextures(planetId: string) {
         }
       }
       
+      // Load cloud texture for Earth
+      if (planetId === 'earth' && (textureConfig as EarthTextureConfig).clouds) {
+        try {
+          textures.clouds = useLoader(TextureLoader, (textureConfig as EarthTextureConfig).clouds!);
+          hasAnyTextures = true;
+        } catch (error) {
+          console.warn(`Failed to load cloud texture for ${planetId}:`, error);
+        }
+      }
+      
       // Load additional textures based on planet type - only if main texture loaded successfully
       // Load ring textures for Saturn
       if (hasAnyTextures && planetId === 'saturn') {
@@ -174,6 +190,20 @@ export function usePlanetTextures(planetId: string) {
         if (saturnConfig.ring) {
           try {
             textures.ring = useLoader(TextureLoader, saturnConfig.ring);
+          } catch (error) {
+            console.warn(`Failed to load ring texture for ${planetId}:`, error);
+          }
+        }
+      }
+      
+      // Load ring textures for Jupiter
+      if (hasAnyTextures && planetId === 'jupiter') {
+        // Type-safe property access  
+        const jupiterConfig = textureConfig as JupiterTextureConfig;
+        
+        if (jupiterConfig.ring) {
+          try {
+            textures.ring = useLoader(TextureLoader, jupiterConfig.ring);
           } catch (error) {
             console.warn(`Failed to load ring texture for ${planetId}:`, error);
           }
@@ -268,6 +298,13 @@ export function getTextureSetupInstructions() {
         source: 'https://visibleearth.nasa.gov/images/57752/blue-marble-land-surface-shallow-water-and-shaded-topography',
         filename: '2k_earth_blue_marble.jpg',
         description: 'Primary Earth surface texture'
+      },
+      {
+        planet: 'earth',
+        texture: 'NASA Blue Marble Clouds',
+        source: 'https://visibleearth.nasa.gov/images/57747/blue-marble-clouds',
+        filename: '2k_earth_clouds.png',
+        description: 'Earth cloud layer for realistic visualization'
       },
       {
         planet: 'io',
